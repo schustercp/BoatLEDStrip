@@ -20,6 +20,7 @@ void AlaLedRgb::initWS2811(OctoWS2811 *pLeds)
 {
     pOctoWS2811Leds = pLeds;
     this->numLeds = pLeds->numPixels();
+    this->numLedsPerStrip = pLeds->stripLength();
 
     // allocate and clear leds array
     leds = (AlaColor *)malloc(3*numLeds);
@@ -91,7 +92,9 @@ void AlaLedRgb::setAnimation(int animation, long speed, AlaPalette palette, bool
     this->palette = palette;
 
 	if (!isSeq)
-		animSeqLen=0;
+    {
+		animSeqLen = 0;
+    }
     setAnimationFunc(animation);
     animStartTime = millis();
 }
@@ -127,7 +130,6 @@ int AlaLedRgb::getAnimation()
     return animation;
 }
 
-
 bool AlaLedRgb::runAnimation()
 {
     if(animation == ALA_STOPSEQ)
@@ -158,7 +160,6 @@ bool AlaLedRgb::runAnimation()
             c = c + animSeq[i].duration;
         }
     }
-
 
     // run the animantion calculation
     if (animFunc != NULL)
@@ -263,7 +264,7 @@ void AlaLedRgb::blinkAlt()
     for(int x=0; x<numLeds; x++)
     {
         int k = (t+x)%2;
-        leds[x] = palette.colors[0].scale(k);
+        leds[transformPixelNumber(x)] = palette.colors[0].scale(k);
     }
 }
 
@@ -316,7 +317,7 @@ void AlaLedRgb::pixelShiftRight()
     for(int x=0; x<numLeds; x++)
     {
         int k = (x==t ? 1:0);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -330,7 +331,7 @@ void AlaLedRgb::pixelShiftLeft()
     for(int x=0; x<numLeds; x++)
     {
         int k = ((x==(numLeds-1-t) ? 1:0));
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -345,7 +346,24 @@ void AlaLedRgb::pixelBounce()
     for(int x=0; x<numLeds; x++)
     {
         int k = x==(-abs(t-numLeds+1)+numLeds-1) ? 1:0;
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
+    }
+}
+
+int AlaLedRgb::transformPixelNumber(int x)
+{
+    int offsetInToStrip = x % numLedsPerStrip;
+    int stripNumber = x / numLedsPerStrip;
+
+    if((stripNumber % 2) == 0)
+    { //Odd Strip
+        return x;
+    }
+    else
+    { //Even Strip - Run backwards.
+        int offset = numLedsPerStrip * stripNumber;
+        int q = (numLedsPerStrip - (x - offset)) + offset;
+        return q;
     }
 }
 
@@ -356,10 +374,12 @@ void AlaLedRgb::pixelSmoothShiftRight()
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
     AlaColor c = palette.getPalColor(tx);
 
+    int nstrips = numLeds / numLedsPerStrip;
+
     for(int x=0; x<numLeds; x++)
     {
         float k = max(0, (-abs(t-1-x)+1));
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -372,7 +392,7 @@ void AlaLedRgb::pixelSmoothShiftLeft()
     for(int x=0; x<numLeds; x++)
     {
         float k = max(0, (-abs(numLeds-t-x)+1));
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -387,7 +407,7 @@ void AlaLedRgb::comet()
     for(int x=0; x<numLeds; x++)
     {
         float k = constrain( (((x-t)/l+1.2f))*(((x-t)<0)? 1:0), 0, 1);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -402,7 +422,7 @@ void AlaLedRgb::cometCol()
         float tx = mapfloat(max(t-x, 0), 0, numLeds/1.7, 0, palette.numColors-1);
         c = palette.getPalColor(tx);
         float k = constrain( (((x-t)/l+1.2f))*(((x-t)<0)? 1:0), 0, 1);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -415,7 +435,7 @@ void AlaLedRgb::pixelSmoothBounce()
     for(int x=0; x<numLeds; x++)
     {
         float k = constrain((-abs(abs(t-numLeds+1)-x)+1), 0, 1);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -429,7 +449,7 @@ void AlaLedRgb::larsonScanner()
     for(int x=0; x<numLeds; x++)
     {
         float k = constrain((-abs(abs(t-numLeds+1)-x)+l), 0, 1);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -443,7 +463,7 @@ void AlaLedRgb::larsonScanner2()
     {
 
         float k = constrain((-abs(abs(t-numLeds-2*l)-x-l)+l), 0, 1);
-        leds[x] = c.scale(k);
+        leds[transformPixelNumber(x)] = c.scale(k);
     }
 }
 
@@ -506,7 +526,7 @@ void AlaLedRgb::plasma()
     {
         AlaColor c1 = palette.getPalColor((float)((x+t)*palette.numColors)/numLeds);
         AlaColor c2 = palette.getPalColor((float)((2*x-t+numLeds)*palette.numColors)/numLeds);
-        leds[x] = c1.interpolate(c2, 0.5);
+        leds[transformPixelNumber(x)] = c1.interpolate(c2, 0.5);
     }
 }
 
@@ -529,7 +549,7 @@ void AlaLedRgb::pixelsFadeColors()
     for(int x=0; x<numLeds; x++)
     {
         AlaColor c = palette.getPalColor(t+7*x);
-        leds[x] = c;
+        leds[transformPixelNumber(x)] = c;
     }
 }
 
@@ -543,7 +563,6 @@ void AlaLedRgb::fadeColorsLoop()
     }
 }
 
-
 void AlaLedRgb::cycleColors()
 {
     int t = getStep(animStartTime, speed, palette.numColors);
@@ -554,7 +573,6 @@ void AlaLedRgb::cycleColors()
     }
 }
 
-
 void AlaLedRgb::movingBars()
 {
     Serial.println("ALA movingBars");
@@ -562,7 +580,7 @@ void AlaLedRgb::movingBars()
 
     for(int x=0; x<numLeds; x++)
     {
-        leds[x] = palette.colors[(((t+x)*palette.numColors)/numLeds)%palette.numColors];
+        leds[transformPixelNumber(x)] = palette.colors[(((t+x)*palette.numColors)/numLeds)%palette.numColors];
     }
 }
 
@@ -573,7 +591,7 @@ void AlaLedRgb::movingGradient()
 
     for(int x=0; x<numLeds; x++)
     {
-        leds[x] = palette.getPalColor((float)((x+t)*palette.numColors)/numLeds);
+        leds[transformPixelNumber(x)] = palette.getPalColor((float)((x+t)*palette.numColors)/numLeds);
     }
 }
 
@@ -679,9 +697,8 @@ void AlaLedRgb::bouncingBalls()
     for (int i=0; i<palette.numColors; i++)
     {
         int p = mapfloat(pxPos[i], 0, 1, 0, numLeds-1);
-        leds[p] = leds[p].sum(palette.colors[i]);
+        leds[transformPixelNumber(p)] = leds[p].sum(palette.colors[i]);
     }
-
 }
 
 void AlaLedRgb::bubbles()
@@ -737,7 +754,7 @@ void AlaLedRgb::bubbles()
         {
             int p = mapfloat(pxPos[i], 0, 1, 0, numLeds-1);
             AlaColor c = palette.colors[i].scale(1-(float)random(10)/30); // add a little flickering
-            leds[p] = c;
+            leds[transformPixelNumber(p)] = c;
         }
     }
 

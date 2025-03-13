@@ -36,7 +36,6 @@ public:
 
     int getCurrentRefreshRate();
 
-
     void setAnimation(int animation, long speed, AlaColor color, bool isSeq=false);
     void setAnimation(int animation, long speed, AlaPalette palette, bool isSeq=false);
     void setAnimation(AlaSeq animSeq[]);
@@ -45,8 +44,6 @@ public:
     int getAnimation();
 
     bool runAnimation();
-
-
 
 private:
 
@@ -87,8 +84,11 @@ private:
     void bouncingBalls();
     void bubbles();
 
+    int transformPixelNumber(int x);
+
     AlaColor *leds; // array to store leds brightness values
     int numLeds;    // number of leds
+    int numLedsPerStrip;
 
     int animation;
     long speed;

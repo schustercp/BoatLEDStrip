@@ -240,7 +240,6 @@ struct AlaPalette
 
 };
 
-
 struct AlaSeq
 {
     int animation;
@@ -249,13 +248,22 @@ struct AlaSeq
     AlaPalette palette;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Palette definitions
 ////////////////////////////////////////////////////////////////////////////////
 
 // Empty palette
 extern AlaPalette alaPalNull;
+
+extern AlaPalette alaPalWhite;
+extern AlaPalette alaPalRed;
+extern AlaPalette alaPalGreen;
+extern AlaPalette alaPalBlue;
+extern AlaPalette alaPalYellow;
+extern AlaPalette alaPalMagenta;
+extern AlaPalette alaPalCyan;
+
+extern AlaPalette alaPalEaster;
 
 // Red,Green,Blue sequence
 extern AlaPalette alaPalRgb;
@@ -274,9 +282,6 @@ extern AlaPalette alaPalHeat;
 extern AlaPalette alaPalFire;
 
 extern AlaPalette alaPalCool;
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utility functions

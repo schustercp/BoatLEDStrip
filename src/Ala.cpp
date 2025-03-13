@@ -18,11 +18,35 @@
 
 #include "Ala.h"
 
-
 AlaColor alaPalNull_[] = { };
 AlaPalette alaPalNull = { 0, alaPalNull_ };
 
-// Red,Green,Blue sequence
+AlaColor alaPalWhite_[] = { 0xFFFFFF };
+AlaPalette alaPalWhite = { 1, alaPalWhite_ };
+
+AlaColor alaPalRed_[] = { 0xFF0000 };
+AlaPalette alaPalRed = { 1, alaPalRed_ };
+
+AlaColor alaPalGreen_[] = { 0x0FF000 };
+AlaPalette alaPalGreen = { 1, alaPalGreen_ };
+
+AlaColor alaPalBlue_[] = { 0x0000FF };
+AlaPalette alaPalBlue = { 1, alaPalBlue_ };
+
+AlaColor alaPalYellow_[] = { 0xFFFF00 };
+AlaPalette alaPalYellow = { 1, alaPalYellow_ };
+
+AlaColor alaPalMagenta_[] = { 0xFF00FF };
+AlaPalette alaPalMagenta = { 1, alaPalMagenta_ };
+
+AlaColor alaPalCyan_[] = { 0x00FFFF };
+AlaPalette alaPalCyan = { 1, alaPalCyan_ };
+
+// Red, Green, Blue sequence
+AlaColor alaPalEaster_[] = { 0xFFFF00, 0x00FFFF, 0xFF00FF };
+AlaPalette alaPalEaster = { 3, alaPalEaster_ };
+
+// Red, Green, Blue sequence
 AlaColor alaPalRgb_[] = { 0xFF0000, 0x00FF00, 0x0000FF };
 AlaPalette alaPalRgb = { 3, alaPalRgb_ };
 
@@ -42,7 +66,6 @@ AlaColor alaPalRainbowStripe_[] =
 };
 AlaPalette alaPalRainbowStripe = { 16, alaPalRainbowStripe_ };
 
-
 // Blue purple ping red orange yellow (and back)
 // Basically, everything but the greens.
 // This palette is good for lighting at a club or party.
@@ -55,7 +78,6 @@ AlaColor alaPalParty_[] =
 };
 AlaPalette alaPalParty = { 16, alaPalParty_ };
 
-
 // Approximate "black body radiation" palette, akin to
 // the FastLED 'HeatColor' function.
 // Recommend that you use values 0-240 rather than
@@ -67,7 +89,6 @@ AlaColor alaPalHeat_[] =
     0x000000, 0xFF0000, 0xFFFF00, 0xFFFFCC
 };
 AlaPalette alaPalHeat = { 4, alaPalHeat_ };
-
 
 AlaColor alaPalFire_[] =
 {
@@ -84,10 +105,6 @@ AlaColor alaPalCool_[] =
 };
 AlaPalette alaPalCool = { 4, alaPalCool_ };
 
-
-
-
-
 int getStep(long t0, long t, int v)
 {
   return ((millis()-t0)%t)*v/t;
@@ -102,7 +119,3 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-
-
-
-
