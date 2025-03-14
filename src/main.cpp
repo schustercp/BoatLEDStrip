@@ -20,35 +20,56 @@ AlaLedRgb rgbStrip;
 // animation, speed, duration, AlaPalette
 AlaSeq default_seq[] =
 {
-  { ALA_OFF,            2000, 4000, alaPalNull },
-  { ALA_ON,             2000, 4000, alaPalEaster },
-  { ALA_SPARKLE,        2000, 18000, alaPalEaster },
-  { ALA_CYCLECOLORS,    6000, 12000, alaPalEaster },
   { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_FADECOLORSLOOP, 6000, 12000, alaPalEaster },
-  { ALA_SPARKLE2,       2000, 12000, alaPalEaster },
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_SPARKLE2,       2000, 12000, alaPalFire },
-  { ALA_PIXELSMOOTHSHIFTRIGHT, 16000, 5000, alaPalEaster },
-  { ALA_OFF,            1000, 1000, alaPalNull },
+  { ALA_ON,             1000, 15000, alaPalWhite },
+  { ALA_CYCLECOLORS,    6000, 30000, alaPalEaster },
+  { ALA_FADECOLORSLOOP, 6000, 30000, alaPalEaster },
+  { ALA_SPARKLE,        2000, 30000, alaPalEaster },
+  { ALA_SPARKLE,        2000, 30000, alaPalParty },
+  { ALA_SPARKLE2,       2000, 30000, alaPalParty },
+  { ALA_SPARKLE2,       2000, 30000, alaPalEaster },
   { ALA_MOVINGBARS,     6000, 32000, alaPalEaster },
-  { ALA_COMET,          6000, 12000, alaPalEaster },
-  { ALA_COMETCOL,       6000, 12000, alaPalEaster },
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_GLOW,           6000, 12000, alaPalEaster },
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_FIRE,           2000, 12000, alaPalFire },
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_BOUNCINGBALLS,  2000, 12000, alaPalEaster },
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_BUBBLES,        2000, 12000, alaPalRainbow },
+  { ALA_COMET,          6000, 30000, alaPalEaster },
+  { ALA_COMETCOL,       6000, 30000, alaPalEaster },
+  { ALA_GLOW,           6000, 30000, alaPalEaster },
+  { ALA_FIRE,           2000, 30000, alaPalParty },
+  { ALA_PLASMA,         2000, 30000, alaPalParty },
+  { ALA_BOUNCINGBALLS,  2000, 30000, alaPalEaster },
+  { ALA_BUBBLES,        2000, 30000, alaPalRainbow },
+  { ALA_LARSONSCANNER,  2000, 30000, alaPalRainbow },
+  { ALA_LARSONSCANNER2, 2000, 30000, alaPalRainbow },
   { ALA_ENDSEQ }
 };
 
+// #define ALA_BLINK 103
+// #define ALA_BLINKALT 104
+// #define ALA_STROBO 107
+// #define ALA_PIXELSHIFTRIGHT 201
+// #define ALA_PIXELSHIFTLEFT 202
+// #define ALA_PIXELBOUNCE 203
+// #define ALA_BARSHIFTRIGHT 231
+// #define ALA_BARSHIFTLEFT 232
+// #define ALA_MOVINGBARS 241
+// #define ALA_MOVINGGRADIENT 242
+// #define ALA_LARSONSCANNER 251
+// #define ALA_LARSONSCANNER2 252
+// #define ALA_FADEIN 301
+// #define ALA_FADEOUT 302
+// #define ALA_FADEINOUT 303
+// #define ALA_FADECOLORS 351
+// #define ALA_FADECOLORSLOOP 352
+// #define ALA_PIXELSFADECOLORS 353
+
 AlaSeq comet_seq[] =
 {
-  { ALA_OFF,            1000, 1000,  alaPalNull },
-  { ALA_COMET,          6000, 18000, alaPalRgb  },
+  { ALA_ON,             1000, 15000, alaPalCyan },
+  { ALA_FADECOLORSLOOP, 6000, 40000, alaPalEaster },
+  { ALA_ON,             1000, 15000, alaPalCyan },
+  { ALA_MOVINGBARS,     6000, 40000, alaPalEaster },
+  { ALA_ON,             1000, 15000, alaPalCyan },
+  { ALA_FIRE,           2000, 40000, alaPalParty },
+  { ALA_ON,             1000, 15000, alaPalCyan },
+  { ALA_PLASMA,         2000, 40000, alaPalParty },
   { ALA_ENDSEQ }
 };
 
@@ -78,16 +99,16 @@ void recvWithEndMarker()
 
     rc = Serial.read();
 
-    if (rc != endMarker) 
+    if (rc != endMarker)
     {
       receivedChars[ndx] = rc;
       ndx++;
-      if (ndx >= numChars) 
+      if (ndx >= numChars)
       {
         ndx = numChars - 1;
       }
     }
-    else 
+    else
     {
       receivedChars[ndx] = '\0'; // terminate the string
       ndx = 0;
@@ -177,7 +198,7 @@ void setup()
   for(uint8_t idx = 0; idx < maxNumSeq; idx++)
   {
     lightSequence[activeSequence][idx] = comet_seq[idx];
-    if(default_seq[idx].animation == ALA_ENDSEQ)
+    if(comet_seq[idx].animation == ALA_ENDSEQ)
     {
       break;
     }
@@ -195,7 +216,7 @@ void setup()
 
   rgbStrip.initWS2811(&leds);
   
-  rgbStrip.setBrightness(AlaMax(0.75, 0.75, 0.75));
+  rgbStrip.setBrightness(AlaMax(0.4, 0.4, 0.4));
 
   rgbStrip.setAnimation(lightSequence[activeSequence]);
 }

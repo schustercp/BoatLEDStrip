@@ -84,8 +84,6 @@ void fade(OctoWS2811* pLeds, int color, double maxIntensity)
     direction = true;
   }
 
-  Serial.println(intensity);
-
   double newRed = double(Red) * intensity;
   double newGreen = double(Green) * intensity;
   double newBlue = double(Blue) * intensity;

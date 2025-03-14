@@ -229,7 +229,6 @@ void AlaLedRgb::setAnimationFunc(int animation)
 
 void AlaLedRgb::on()
 {
-    Serial.println("ALA ON");
     for(int i=0; i<numLeds; i++)
     {
         leds[i] = palette.colors[0];
@@ -238,7 +237,6 @@ void AlaLedRgb::on()
 
 void AlaLedRgb::off()
 {
-    Serial.println("ALA OFF");
     for(int i=0; i<numLeds; i++)
     {
         leds[i] = 0x000000;
@@ -248,7 +246,6 @@ void AlaLedRgb::off()
 
 void AlaLedRgb::blink()
 {
-    Serial.println("ALA Blink");
     int t = getStep(animStartTime, speed, 2);
     int k = (t+1)%2;
     for(int x=0; x<numLeds; x++)
@@ -270,7 +267,6 @@ void AlaLedRgb::blinkAlt()
 
 void AlaLedRgb::sparkle()
 {
-    Serial.println("ALA Sparkle");
     int p = speed/100;
     for(int x=0; x<numLeds; x++)
     {
@@ -280,7 +276,6 @@ void AlaLedRgb::sparkle()
 
 void AlaLedRgb::sparkle2()
 {
-    Serial.println("ALA Sparkle2");
     int p = speed/10;
     for(int x=0; x<numLeds; x++)
     {
@@ -309,7 +304,6 @@ void AlaLedRgb::strobo()
 
 void AlaLedRgb::pixelShiftRight()
 {
-    Serial.println("ALA pixelShiftRight");
     int t = getStep(animStartTime, speed, numLeds);
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
     AlaColor c = palette.getPalColor(tx);
@@ -323,7 +317,6 @@ void AlaLedRgb::pixelShiftRight()
 
 void AlaLedRgb::pixelShiftLeft()
 {
-    Serial.println("ALA pixelShiftLeft");
     int t = getStep(animStartTime, speed, numLeds);
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
     AlaColor c = palette.getPalColor(tx);
@@ -338,7 +331,6 @@ void AlaLedRgb::pixelShiftLeft()
 // Bounce back and forth
 void AlaLedRgb::pixelBounce()
 {
-    Serial.println("ALA pixelBounce");
     int t = getStep(animStartTime, speed, 2*numLeds-2);
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
     AlaColor c = palette.getPalColor(tx);
@@ -352,10 +344,10 @@ void AlaLedRgb::pixelBounce()
 
 int AlaLedRgb::transformPixelNumber(int x)
 {
-    int offsetInToStrip = x % numLedsPerStrip;
+    // int offsetInToStrip = x % numLedsPerStrip;
     int stripNumber = x / numLedsPerStrip;
 
-    if((stripNumber % 2) == 0)
+    if((stripNumber % 2) == 1)
     { //Odd Strip
         return x;
     }
@@ -369,12 +361,11 @@ int AlaLedRgb::transformPixelNumber(int x)
 
 void AlaLedRgb::pixelSmoothShiftRight()
 {
-    Serial.println("ALA pixelSmoothShiftRight");
     float t = getStepFloat(animStartTime, speed, numLeds+1);
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
     AlaColor c = palette.getPalColor(tx);
 
-    int nstrips = numLeds / numLedsPerStrip;
+    // int nstrips = numLeds / numLedsPerStrip;
 
     for(int x=0; x<numLeds; x++)
     {
@@ -398,7 +389,6 @@ void AlaLedRgb::pixelSmoothShiftLeft()
 
 void AlaLedRgb::comet()
 {
-    Serial.println("ALA comet");
     float l = numLeds/2;  // length of the tail
     float t = getStepFloat(animStartTime, speed, 2*numLeds-l);
     float tx = getStepFloat(animStartTime, speed, palette.numColors);
@@ -575,7 +565,6 @@ void AlaLedRgb::cycleColors()
 
 void AlaLedRgb::movingBars()
 {
-    Serial.println("ALA movingBars");
     int t = getStep(animStartTime, speed, numLeds);
 
     for(int x=0; x<numLeds; x++)
@@ -586,7 +575,6 @@ void AlaLedRgb::movingBars()
 
 void AlaLedRgb::movingGradient()
 {
-    Serial.println("ALA movingGradient");
     float t = getStepFloat(animStartTime, speed, numLeds);
 
     for(int x=0; x<numLeds; x++)
@@ -644,7 +632,7 @@ void AlaLedRgb::fire()
     for(int j=0; j<numLeds; j++)
     {
         float colorindex = (float)(heat[j] * (palette.numColors-1) ) / 256;
-        leds[j] = palette.getPalColor(colorindex);
+        leds[transformPixelNumber(j)] = palette.getPalColor(colorindex);
     }
 }
 
