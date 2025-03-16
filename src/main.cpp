@@ -2,7 +2,10 @@
 #include <AlaLedRgb.h>
 #include <CommandParser.h>
 
-typedef CommandParser<> MyCommandParser;
+typedef CommandParser<16, 6, 10, 32, 64> MyCommandParser;
+
+// template<size_t COMMANDS = 16, size_t COMMAND_ARGS = 6, size_t COMMAND_NAME_LENGTH = 10, size_t COMMAND_ARG_SIZE = 32, size_t RESPONSE_SIZE = 64>
+// class CommandParser
 
 MyCommandParser parser;
 
@@ -97,11 +100,14 @@ void recvWithEndMarker()
 
     if (rc != endMarker)
     {
-      receivedChars[ndx] = rc;
-      ndx++;
-      if (ndx >= numChars)
+      if((rc != '\t') && (rc != '\r'))
       {
-        ndx = numChars - 1;
+        receivedChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numChars)
+        {
+          ndx = numChars - 1;
+        }
       }
     }
     else
@@ -170,7 +176,17 @@ void cmd_clear(MyCommandParser::Argument *args, char *response)
   strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
 }
 
-void setup() 
+void cmd_bright(MyCommandParser::Argument *args, char *response)
+{
+  uint32_t brightness = (uint32_t)args[0].asUInt64;
+  float percent = (float)brightness / 100.0;
+
+  rgbStrip.setBrightness(AlaMax(percent, percent, percent));
+
+  strlcpy(response, "success\n", MyCommandParser::MAX_RESPONSE_SIZE);
+}
+
+void setup()
 {
   PaletteArray[0] = alaPalNull;
   PaletteArray[1] = alaPalWhite;
@@ -203,10 +219,6 @@ void setup()
   // Start Serial Stream
   Serial.begin(115200);
 
-  parser.registerCommand("SWAP", "", &cmd_swap);
-  parser.registerCommand("CLER", "", &cmd_clear);
-  parser.registerCommand("ADDD", "uuuuu", &cmd_add);
-
   leds.begin();
   leds.show();
 
@@ -215,6 +227,28 @@ void setup()
   rgbStrip.setBrightness(AlaMax(0.4, 0.4, 0.4));
 
   rgbStrip.setAnimation(lightSequence[activeSequence]);
+
+  Serial.println("Heihei Rere LED Strip Control");
+
+  if(!parser.registerCommand("SWAP", "", &cmd_swap))
+  {
+    Serial.println("Parser Command Add of \"SWAP\" Failed.");
+  }
+
+  if(!parser.registerCommand("CLER", "", &cmd_clear))
+  {
+    Serial.println("Parser Command Add of \"CLER\" Failed.");
+  }
+
+  if(!parser.registerCommand("ADDD", "uuuuu", &cmd_add))
+  {
+    Serial.println("Parser Command Add of \"ADDD\" Failed.");
+  }
+
+  if(!parser.registerCommand("BRIT", "u", &cmd_bright))
+  {
+    Serial.println("Parser Command Add of \"BRIT\" Failed.");
+  }
 }
 
 void loop() 
