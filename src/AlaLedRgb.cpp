@@ -133,12 +133,16 @@ int AlaLedRgb::getAnimation()
 bool AlaLedRgb::runAnimation()
 {
     if(animation == ALA_STOPSEQ)
+    {
         return true;
+    }
     
     // skip the refresh if not enough time has passed since last update
     unsigned long cTime = millis();
     if (cTime < lastRefreshTime + refreshMillis)
+    {
         return false;
+    }
 
     // calculate real refresh rate
     refreshRate = 1000/(cTime - lastRefreshTime);
@@ -223,7 +227,6 @@ void AlaLedRgb::setAnimationFunc(int animation)
 
         default:                        animFunc = &AlaLedRgb::off;
     }
-
 }
 
 

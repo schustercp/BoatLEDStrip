@@ -65,10 +65,6 @@ AlaSeq comet_seq[] =
   { ALA_ON,             1000, 15000, alaPalCyan },
   { ALA_FADECOLORSLOOP, 6000, 40000, alaPalEaster },
   { ALA_ON,             1000, 15000, alaPalCyan },
-  { ALA_MOVINGBARS,     6000, 40000, alaPalEaster },
-  { ALA_ON,             1000, 15000, alaPalCyan },
-  { ALA_FIRE,           2000, 40000, alaPalParty },
-  { ALA_ON,             1000, 15000, alaPalCyan },
   { ALA_PLASMA,         2000, 40000, alaPalParty },
   { ALA_ENDSEQ }
 };
