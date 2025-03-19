@@ -11,8 +11,8 @@ MyCommandParser parser;
 
 const int ledsPerStrip = 150;
 
-DMAMEM int displayMemory[ledsPerStrip*6];
-int drawingMemory[ledsPerStrip*6];
+DMAMEM int displayMemory[ledsPerStrip * 6];
+int drawingMemory[ledsPerStrip * 6];
 
 const int config = WS2811_GRB | WS2811_800kHz;
 
@@ -22,27 +22,26 @@ OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config, 4, HeiheiPin
 AlaLedRgb rgbStrip;
 // animation, speed, duration, AlaPalette
 AlaSeq default_seq[] =
-{
-  { ALA_OFF,            1000, 1000, alaPalNull },
-  { ALA_ON,             1000, 15000, alaPalWhite },
-  { ALA_CYCLECOLORS,    6000, 30000, alaPalEaster },
-  { ALA_FADECOLORSLOOP, 6000, 30000, alaPalEaster },
-  { ALA_SPARKLE,        2000, 30000, alaPalEaster },
-  { ALA_SPARKLE,        2000, 30000, alaPalParty },
-  { ALA_SPARKLE2,       2000, 30000, alaPalParty },
-  { ALA_SPARKLE2,       2000, 30000, alaPalEaster },
-  { ALA_MOVINGBARS,     6000, 32000, alaPalEaster },
-  { ALA_COMET,          6000, 30000, alaPalEaster },
-  { ALA_COMETCOL,       6000, 30000, alaPalEaster },
-  { ALA_GLOW,           6000, 30000, alaPalEaster },
-  { ALA_FIRE,           2000, 30000, alaPalParty },
-  { ALA_PLASMA,         2000, 30000, alaPalParty },
-  { ALA_BOUNCINGBALLS,  2000, 30000, alaPalEaster },
-  { ALA_BUBBLES,        2000, 30000, alaPalRainbow },
-  { ALA_LARSONSCANNER,  2000, 30000, alaPalRainbow },
-  { ALA_LARSONSCANNER2, 2000, 30000, alaPalRainbow },
-  { ALA_ENDSEQ }
-};
+    {
+        {ALA_OFF, 1000, 1000, alaPalNull},
+        {ALA_ON, 1000, 15000, alaPalWhite},
+        {ALA_CYCLECOLORS, 6000, 30000, alaPalEaster},
+        {ALA_FADECOLORSLOOP, 6000, 30000, alaPalEaster},
+        {ALA_SPARKLE, 2000, 30000, alaPalEaster},
+        {ALA_SPARKLE, 2000, 30000, alaPalParty},
+        {ALA_SPARKLE2, 2000, 30000, alaPalParty},
+        {ALA_SPARKLE2, 2000, 30000, alaPalEaster},
+        {ALA_MOVINGBARS, 6000, 32000, alaPalEaster},
+        {ALA_COMET, 6000, 30000, alaPalEaster},
+        {ALA_COMETCOL, 6000, 30000, alaPalEaster},
+        {ALA_GLOW, 6000, 30000, alaPalEaster},
+        {ALA_FIRE, 2000, 30000, alaPalParty},
+        {ALA_PLASMA, 2000, 30000, alaPalParty},
+        {ALA_BOUNCINGBALLS, 2000, 30000, alaPalEaster},
+        {ALA_BUBBLES, 2000, 30000, alaPalRainbow},
+        {ALA_LARSONSCANNER, 2000, 30000, alaPalRainbow},
+        {ALA_LARSONSCANNER2, 2000, 30000, alaPalRainbow},
+        {ALA_ENDSEQ}};
 
 // #define ALA_BLINK 103
 // #define ALA_BLINKALT 104
@@ -64,13 +63,12 @@ AlaSeq default_seq[] =
 // #define ALA_PIXELSFADECOLORS 353
 
 AlaSeq comet_seq[] =
-{
-  { ALA_ON,             1000, 15000, alaPalCyan },
-  { ALA_FADECOLORSLOOP, 6000, 40000, alaPalEaster },
-  { ALA_ON,             1000, 15000, alaPalCyan },
-  { ALA_PLASMA,         2000, 40000, alaPalParty },
-  { ALA_ENDSEQ }
-};
+    {
+        {ALA_ON, 1000, 15000, alaPalCyan},
+        {ALA_FADECOLORSLOOP, 6000, 40000, alaPalEaster},
+        {ALA_ON, 1000, 15000, alaPalCyan},
+        {ALA_PLASMA, 2000, 40000, alaPalParty},
+        {ALA_ENDSEQ}};
 
 int data;
 const byte numChars = 128;
@@ -84,23 +82,23 @@ AlaSeq lightSequence[2][maxNumSeq];
 uint8_t activeSequence = 0;
 uint8_t inActiveSequence = 1;
 
-void recvWithEndMarker() 
+void recvWithEndMarker()
 {
   static byte ndx = 0;
   char endMarker = '\n';
   char rc;
 
   // if (Serial.available() > 0) {
-  while (Serial.available() > 0 && newData == false) 
+  while (Serial.available() > 0 && newData == false)
   {
-    //size_t lineLength = Serial.readBytesUntil('\n', receivedChars, 127);
-    //receivedChars[lineLength] = '\0';
+    // size_t lineLength = Serial.readBytesUntil('\n', receivedChars, 127);
+    // receivedChars[lineLength] = '\0';
 
     rc = Serial.read();
 
     if (rc != endMarker)
     {
-      if((rc != '\t') && (rc != '\r'))
+      if ((rc != '\t') && (rc != '\r'))
       {
         receivedChars[ndx] = rc;
         ndx++;
@@ -118,7 +116,7 @@ void recvWithEndMarker()
     }
   }
 
-  if(newData)
+  if (newData)
   {
     char response[MyCommandParser::MAX_RESPONSE_SIZE];
     parser.processCommand(receivedChars, response);
@@ -127,7 +125,7 @@ void recvWithEndMarker()
   }
 }
 
-void cmd_add(MyCommandParser::Argument *args, char *response) 
+void cmd_add(MyCommandParser::Argument *args, char *response)
 {
   uint32_t idx = (uint32_t)args[0].asUInt64;
   uint32_t animation = (uint32_t)args[1].asUInt64;
@@ -135,7 +133,7 @@ void cmd_add(MyCommandParser::Argument *args, char *response)
   uint32_t duration = (uint32_t)args[3].asUInt64;
   uint32_t palette = (uint32_t)args[4].asUInt64;
 
-  if(palette > 7)
+  if (palette > 7)
   {
     palette = 1;
   }
@@ -150,7 +148,7 @@ void cmd_add(MyCommandParser::Argument *args, char *response)
 
 void cmd_swap(MyCommandParser::Argument *args, char *response)
 {
-  if(activeSequence == 0)
+  if (activeSequence == 0)
   {
     activeSequence = 1;
     inActiveSequence = 0;
@@ -160,7 +158,7 @@ void cmd_swap(MyCommandParser::Argument *args, char *response)
     activeSequence = 0;
     inActiveSequence = 1;
   }
-  
+
   rgbStrip.setAnimation(lightSequence[activeSequence]);
 
   strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
@@ -168,7 +166,7 @@ void cmd_swap(MyCommandParser::Argument *args, char *response)
 
 void cmd_clear(MyCommandParser::Argument *args, char *response)
 {
-  for(uint8_t idx = 0; idx < maxNumSeq; idx++)
+  for (uint8_t idx = 0; idx < maxNumSeq; idx++)
   {
     lightSequence[inActiveSequence][idx].animation = ALA_ENDSEQ;
   }
@@ -183,7 +181,7 @@ void cmd_bright(MyCommandParser::Argument *args, char *response)
 
   rgbStrip.setBrightness(AlaMax(percent, percent, percent));
 
-  strlcpy(response, "success\n", MyCommandParser::MAX_RESPONSE_SIZE);
+  strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
 }
 
 void setup()
@@ -206,11 +204,11 @@ void setup()
   PaletteArray[15] = alaPalCool;
   PaletteArray[16] = alaPalNull;
 
-  //Copy the default Light Sequence.
-  for(uint8_t idx = 0; idx < maxNumSeq; idx++)
+  // Copy the default Light Sequence.
+  for (uint8_t idx = 0; idx < maxNumSeq; idx++)
   {
     lightSequence[activeSequence][idx] = comet_seq[idx];
-    if(comet_seq[idx].animation == ALA_ENDSEQ)
+    if (comet_seq[idx].animation == ALA_ENDSEQ)
     {
       break;
     }
@@ -223,35 +221,35 @@ void setup()
   leds.show();
 
   rgbStrip.initWS2811(&leds);
-  
+
   rgbStrip.setBrightness(AlaMax(0.4, 0.4, 0.4));
 
   rgbStrip.setAnimation(lightSequence[activeSequence]);
 
   Serial.println("Heihei Rere LED Strip Control");
 
-  if(!parser.registerCommand("SWAP", "", &cmd_swap))
+  if (!parser.registerCommand("SWAP", "", &cmd_swap))
   {
     Serial.println("Parser Command Add of \"SWAP\" Failed.");
   }
 
-  if(!parser.registerCommand("CLER", "", &cmd_clear))
+  if (!parser.registerCommand("CLER", "", &cmd_clear))
   {
     Serial.println("Parser Command Add of \"CLER\" Failed.");
   }
 
-  if(!parser.registerCommand("ADDD", "uuuuu", &cmd_add))
+  if (!parser.registerCommand("ADDD", "uuuuu", &cmd_add))
   {
     Serial.println("Parser Command Add of \"ADDD\" Failed.");
   }
 
-  if(!parser.registerCommand("BRIT", "u", &cmd_bright))
+  if (!parser.registerCommand("BRIT", "u", &cmd_bright))
   {
     Serial.println("Parser Command Add of \"BRIT\" Failed.");
   }
 }
 
-void loop() 
+void loop()
 {
   rgbStrip.runAnimation();
   recvWithEndMarker();
