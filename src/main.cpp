@@ -133,10 +133,13 @@ void cmd_add(MyCommandParser::Argument *args, char *response)
   uint32_t duration = (uint32_t)args[3].asUInt64;
   uint32_t palette = (uint32_t)args[4].asUInt64;
 
-  if (palette > 7)
+  if (palette >= 24)
   {
     palette = 1;
   }
+
+  speed *= 1000;
+  duration *= 1000;
 
   lightSequence[inActiveSequence][idx].animation = animation;
   lightSequence[inActiveSequence][idx].duration = duration;
@@ -148,6 +151,39 @@ void cmd_add(MyCommandParser::Argument *args, char *response)
 
 void cmd_swap(MyCommandParser::Argument *args, char *response)
 {
+  if (activeSequence == 0)
+  {
+    activeSequence = 1;
+    inActiveSequence = 0;
+  }
+  else
+  {
+    activeSequence = 0;
+    inActiveSequence = 1;
+  }
+
+  rgbStrip.setAnimation(lightSequence[activeSequence]);
+
+  strlcpy(response, "success", MyCommandParser::MAX_RESPONSE_SIZE);
+}
+
+void cmd_returnToDefault(MyCommandParser::Argument *args, char *response)
+{
+  for (uint8_t idx = 0; idx < maxNumSeq; idx++)
+  {
+    lightSequence[inActiveSequence][idx].animation = ALA_ENDSEQ;
+  }
+
+  // Copy the default Light Sequence.
+  for (uint8_t idx = 0; idx < maxNumSeq; idx++)
+  {
+    lightSequence[inActiveSequence][idx] = comet_seq[idx];
+    if (comet_seq[idx].animation == ALA_ENDSEQ)
+    {
+      break;
+    }
+  }
+
   if (activeSequence == 0)
   {
     activeSequence = 1;
@@ -231,6 +267,11 @@ void setup()
   if (!parser.registerCommand("SWAP", "", &cmd_swap))
   {
     Serial.println("Parser Command Add of \"SWAP\" Failed.");
+  }
+
+  if (!parser.registerCommand("DEFT", "", &cmd_returnToDefault))
+  {
+    Serial.println("Parser Command Add of \"DEFT\" Failed.");
   }
 
   if (!parser.registerCommand("CLER", "", &cmd_clear))
